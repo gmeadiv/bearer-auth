@@ -2,12 +2,18 @@
 
 const express = require('express');
 const authRouter = express.Router();
-
+const bcrypt = require('bcrypt');
 const { users } = require('./models/index.js');
 const basicAuth = require('./middleware/basic.js')
 const bearerAuth = require('./middleware/bearer.js')
 
 authRouter.post('/signup', async (req, res, next) => {
+
+  users.beforeCreate(async (user) => {
+    let hashedPass = await bcrypt.hash(user.password, 10);
+    user.password = hashedPass;
+  });
+
   try {
     let userRecord = await users.create(req.body);
     const output = {
