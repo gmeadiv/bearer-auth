@@ -31,7 +31,7 @@ const User = (sequelize, DataTypes) => sequelize.define('User', {
 
   // Basic AUTH: Validating strings (username, password) 
   User.authenticateBasic = async function (username, password) {
-    const user = await this.findOne({ username })
+    const user = await this.findOne({where: { username }})
     const valid = await bcrypt.compare(password, user.password)
     if (valid) { return user; }
     throw new Error('Invalid User');

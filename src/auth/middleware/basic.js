@@ -9,13 +9,34 @@ const bcrypt = require('bcrypt');
 //   if (!req.headers.authorization) { return _authError(); }
 
 //   let basic = req.headers.authorization;
-//   let [username, pass] = base64.decode(basic).split(':');
+
+//   let encodedUserPass = basic.split(' ')[1];
+
+//   let decodedUserPass = await base64.decode(encodedUserPass);
+
+//   let [username, pass] = decodedUserPass.split(':');
 
 //   try {
-//     req.user = await user.authenticateBasic(username, pass)
-//     next();
+//     let userQuery = await users.findOne({where: { username }});
+
+//     let password = userQuery.password;
+
+//     let isValidPassword = await bcrypt.compare(pass, password);
+
+//     if (isValidPassword) { 
+//       res.send(userQuery); 
+//       req.user = userQuery;
+//       next();
+//     }
+
 //   } catch (e) {
+
 //     res.status(403).send('Invalid Login');
+
+//   }
+
+//   function _authError() {
+//     res.status(403).send('INVALID LOGIN')
 //   }
 
 // }
@@ -33,18 +54,23 @@ async function basicAuth(request, response, next){
     let encodedUserPass = authString.split(' ')[1];
 
     let decodedUserPass = await base64.decode(encodedUserPass);
+  
+    let [username, pass] = decodedUserPass.split(':');
 
-    let [ user, pass ] = decodedUserPass.split(':');
-   
-    let userQuery = await users.findOne({where: { username: user}});
+    let userQuery = await users.findOne({where: { username }});
 
-    let userQueryPWord = userQuery.password;
+    console.log(userQuery, '<-- USER QUERY --<<')
 
-    let isValidPassword = await bcrypt.compare(pass, userQueryPWord);
+    let password = userQuery.password;
+
+    console.log(pass, '<-- PASS | PASSWORD -->', password)
+
+    let isValidPassword = await bcrypt.compare(pass, password);
    
     if (isValidPassword) {
    
       response.send(userQuery);
+      next();
    
     } else {
 

@@ -1,7 +1,7 @@
 'use strict';
 
-const middleware = require('../../../src/auth/middleware/basic.js');
-const { db, users } = require('../../../src/auth/models/index.js');
+const middleware = require('../src/auth/middleware/basic.js');
+const { db, users } = require('../src/auth/models/index.js');
 
 let userInfo = {
   admin: { username: 'admin-basic', password: 'password' },
@@ -13,6 +13,7 @@ beforeAll(async (done) => {
   await users.create(userInfo.admin);
   done();
 });
+
 afterAll(async (done) => {
   await db.drop();
   done();
@@ -33,7 +34,7 @@ describe('Auth Middleware', () => {
 
   describe('user authentication', () => {
 
-    it('fails a login for a user (admin) with the incorrect basic credentials', () => {
+    it('fails a login for a user (admin) with the incorrect basic credentials', async () => {
 
       // Change the request to match this test case
       req.headers = {
