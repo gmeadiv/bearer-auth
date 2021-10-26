@@ -25,16 +25,20 @@ async function bearAuth(request, response, next){
    
       request.user(userQuery);
       response.status(200);
+      console.log('BEARER AUTHENTICATION SUCCESS');
    
     } else {
 
       response.status(403).send('password doesn\'t match');
+      console.log('BEARER AUTHENTICATION FAILURE');
 
     }
    
   } catch (error) {
 
       response.status(401).send('unauthenticated request');
+      console.log('BEARER AUTHENTICATION FAILURE');
+
 
   }
 
