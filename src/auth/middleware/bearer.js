@@ -3,7 +3,9 @@
 const { users } = require('../models/index.js');
 const jwt = require('jsonwebtoken');
 
-module.exports = async (request, response, next) => {
+const SECRET = process.env.SECRET;
+
+async function bearerAuth(request, response, next) {
 
   if (!request.headers.authorization) {
     response.status(403).send('no authorization headers');
@@ -15,28 +17,30 @@ module.exports = async (request, response, next) => {
 
     console.log(token, '<-- TOKEN --<<')
 
-    const validUser = await jwt.verify(token);
+    const validUser = await jwt.verify(token, SECRET);
 
     console.log(validUser, '<-- VALID USER --<<');
 
-    let userQuery = await users.findOne({where: { username: validUser}});
+    let userQuery = await users.findOne({where: { username: validUser.username}});
 
     console.log(userQuery, '<-- USER QUERY --<<');
    
     if (userQuery) {
    
-      request.user(userQuery);
+      response.send(userQuery);
       response.status(200);
       console.log('BEARER AUTHENTICATION SUCCESS');
    
     } else {
 
-      response.status(403).send('password doesn\'t match');
+      response.status(403);
       console.log('BEARER AUTHENTICATION FAILURE');
 
     }
 
-  } catch (e) {
-    response.status(403).send('Invalid Login');;
+  } catch (error) {
+    response.status(403).send(error);
   }
 }
+
+module.exports = {bearerAuth}
