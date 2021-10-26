@@ -53,7 +53,7 @@ async function basicAuth(request, response, next){
 
     let encodedUserPass = authString.split(' ')[1];
 
-    let decodedUserPass = await base64.decode(encodedUserPass);
+    let decodedUserPass = base64.decode(encodedUserPass);
   
     let [username, pass] = decodedUserPass.split(':');
 

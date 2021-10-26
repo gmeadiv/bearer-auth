@@ -10,19 +10,31 @@ const bearerAuth = require('./middleware/bearer.js')
 authRouter.post('/signup', async (req, res, next) => {
 
   users.beforeCreate(async (user) => {
+
+    console.log(user.password, '<-- PASSWORD BEFORE ENCRYPT --<<')
+
     let hashedPass = await bcrypt.hash(user.password, 10);
     user.password = hashedPass;
+
+    console.log(user.password, '<-- PASSWORD AFTER ENCRYPT --<<')
+
   });
 
   try {
+
     let userRecord = await users.create(req.body);
+
     const output = {
       user: userRecord,
       token: userRecord.token
     };
+
     res.status(201).json(output);
+
   } catch (e) {
+
     next(e.message);
+
   }
 });
 
