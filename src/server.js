@@ -9,9 +9,13 @@ const morgan = require('morgan');
 const errorHandler = require('./error-handlers/500.js');
 const notFound = require('./error-handlers/404.js');
 const authRoutes = require('./auth/routes.js');
+const { db } = require('./auth/models/index.js');
 
 // Prepare the express app
 const app = express();
+
+require('dotenv').config();
+const PORT = process.env.PORT;
 
 // App Level MW
 app.use(cors());
@@ -29,9 +33,10 @@ app.use(errorHandler);
 
 module.exports = {
   server: app,
-  startup: (port) => {
-    app.listen(port, () => {
-      console.log(`Server Up on ${port}`);
-    });
-  },
+  start: db.sync()
+  .then(() => {
+    app.listen(PORT, () => console.log('server is running on', PORT));
+  }).catch(error => {
+    console.error('Could not start server', error.message);
+  }),
 };
