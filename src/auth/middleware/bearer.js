@@ -1,20 +1,42 @@
 'use strict';
 
 const { users } = require('../models/index.js');
+const jwt = require('jsonwebtoken');
 
-module.exports = async (req, res, next) => {
+module.exports = async (request, response, next) => {
+
+  if (!request.headers.authorization) {
+    response.status(403).send('no authorization headers');
+  }
 
   try {
 
-    if (!req.headers.authorization) { next('Invalid Login') }
+    const token = request.headers.authorization.split(' ').pop();
 
-    const token = req.headers.authorization.split(' ').pop();
-    const validUser = await users.authenticateWithToken(token);
+    console.log(token, '<-- TOKEN --<<')
 
-    req.user = validUser;
-    req.token = validUser.token;
+    const validUser = await jwt.verify(token);
+
+    console.log(validUser, '<-- VALID USER --<<');
+
+    let userQuery = await users.findOne({where: { username: validUser}});
+
+    console.log(userQuery, '<-- USER QUERY --<<');
+   
+    if (userQuery) {
+   
+      request.user(userQuery);
+      response.status(200);
+      console.log('BEARER AUTHENTICATION SUCCESS');
+   
+    } else {
+
+      response.status(403).send('password doesn\'t match');
+      console.log('BEARER AUTHENTICATION FAILURE');
+
+    }
 
   } catch (e) {
-    res.status(403).send('Invalid Login');;
+    response.status(403).send('Invalid Login');;
   }
 }

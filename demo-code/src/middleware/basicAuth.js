@@ -5,6 +5,7 @@ const base64 = require('base-64');
 const bcrypt = require('bcrypt');
 
 async function basicAuth(request, response, next){
+  
   if (!request.headers.authorization) {
     response.status(403).send('no authorization headers');
   }

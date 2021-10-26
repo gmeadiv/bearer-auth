@@ -26,7 +26,7 @@ authRouter.post('/signup', async (req, res, next) => {
   }
 });
 
-authRouter.post('/signin', basicAuth, (req, res, next) => {
+authRouter.post('/signin', basicAuth.basicAuth, (req, res, next) => {
   const user = {
     user: request.user,
     token: request.user.token
