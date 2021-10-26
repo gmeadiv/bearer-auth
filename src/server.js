@@ -10,15 +10,19 @@ const logger = require('./middleware/logger.js');
 const error404 = require('./error-handlers/404.js');
 const signUpFunctions = require('./routes/sign-up.js');
 const signInFunctions = require('./routes/sign-in.js');
-const basicAuth = require('./middleware/basicAuth.js');
+const bearAuth = require('./middleware/bearAuth.js')
 const { db } = require('./models/index.js');
 
 app.use(express.json());
 app.use(logger);
 
-app.post('/signup', signUpFunctions.signUp);
-app.post('/signin', basicAuth.basicAuth);
+app.get('/jokes', bearAuth.bearAuth, (request, response) => {
+  response.status(200).send('bearAuth')
+  console.log(request)
+});
 
+app.post('/signup', signUpFunctions.signUp);
+app.post('/signin', signInFunctions.signIn);
 
 app.use(error404);
 

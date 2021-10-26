@@ -1,5 +1,9 @@
 'use strict';
 
+const jwt = require('jsonwebtoken');
+
+const SECRET = process.env.SECRET || 'secretstringfortesting';
+
 const User = (sequelize, DataTypes) => sequelize.define('User', {
 
   username: {
@@ -10,6 +14,16 @@ const User = (sequelize, DataTypes) => sequelize.define('User', {
   password: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+
+  token: {
+    type: DataTypes.VIRTUAL,
+    get() {
+      let payload = {
+        username: this.username,
+      }
+      return jwt.sign(payload, SECRET)
+    }
   }
   
 });
