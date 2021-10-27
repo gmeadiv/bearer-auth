@@ -51,10 +51,16 @@ async function basicAuth(request, response, next){
 
     let authString = request.headers.authorization;
 
+    console.log(authString, '<-- authString --<<')
+
     let encodedUserPass = authString.split(' ')[1];
 
+    console.log(encodedUserPass, '<-- encodedUserPass --<<')
+
     let decodedUserPass = base64.decode(encodedUserPass);
-  
+
+    console.log(decodedUserPass, '<-- decodedUserPass --<<')
+
     let [username, pass] = decodedUserPass.split(':');
 
     let userQuery = await users.findOne({where: { username }});

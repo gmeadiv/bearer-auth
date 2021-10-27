@@ -7,29 +7,25 @@ const { users } = require('./models/index.js');
 const basicAuth = require('./middleware/basic.js')
 const bearerAuth = require('./middleware/bearer.js')
 
-authRouter.post('/signup', async (req, res, next) => {
+authRouter.post('/signup', async (request, response, next) => {
 
   users.beforeCreate(async (user) => {
 
-    console.log(user.password, '<-- PASSWORD BEFORE ENCRYPT --<<')
-
     let hashedPass = await bcrypt.hash(user.password, 10);
     user.password = hashedPass;
-
-    console.log(user.password, '<-- PASSWORD AFTER ENCRYPT --<<')
 
   });
 
   try {
 
-    let userRecord = await users.create(req.body);
+    let userRecord = await users.create(request.body);
 
     const output = {
       user: userRecord,
       token: userRecord.token
     };
 
-    res.status(201).json(output);
+    response.status(201).json(output);
 
   } catch (e) {
 
@@ -38,12 +34,12 @@ authRouter.post('/signup', async (req, res, next) => {
   }
 });
 
-authRouter.post('/signin', basicAuth.basicAuth, (req, res, next) => {
+authRouter.post('/signin', basicAuth.basicAuth, (request, response, next) => {
   const user = {
-    user: req.user,
-    token: req.user.token
+    user: request.user,
+    token: request.user.token
   };
-  res.status(200).json(user);
+  response.status(200).json(user);
 });
 
 authRouter.get('/users', basicAuth.basicAuth, async (req, res, next) => {

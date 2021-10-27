@@ -29,23 +29,23 @@ const User = (sequelize, DataTypes) => sequelize.define('User', {
   });
 
   // Basic AUTH: Validating strings (username, password) 
-  User.authenticateBasic = async function (username, password) {
-    const user = await this.findOne({where: { username }})
-    const valid = await bcrypt.compare(password, user.password)
-    if (valid) { return user; }
-    throw new Error('Invalid User');
-  }
+  // User.authenticateBasic = async function (username, password) {
+  //   const user = await this.findOne({where: { username }})
+  //   const valid = await bcrypt.compare(password, user.password)
+  //   if (valid) { return user; }
+  //   throw new Error('Invalid User');
+  // }
 
   // Bearer AUTH: Validating a token
-  User.authenticateToken = async function (token) {
-    try {
-      const parsedToken = jwt.verify(token, process.env.SECRET);
-      const user = this.findOne({ username: parsedToken.username })
-      if (user) { return user; }
-      throw new Error("User Not Found");
-    } catch (e) {
-      throw new Error(e.message)
-    }
-}
+//   User.authenticateToken = async function (token) {
+//     try {
+//       const parsedToken = jwt.verify(token, process.env.SECRET);
+//       const user = this.findOne({ username: parsedToken.username })
+//       if (user) { return user; }
+//       throw new Error("User Not Found");
+//     } catch (e) {
+//       throw new Error(e.message)
+//     }
+// }
 
 module.exports = User;
