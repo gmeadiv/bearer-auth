@@ -76,7 +76,6 @@ async function basicAuth(request, response, next){
     if (isValidPassword) {
    
       response.send(userQuery);
-      next();
    
     } else {
 
